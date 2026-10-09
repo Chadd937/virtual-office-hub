@@ -12,11 +12,13 @@ export const planObjective = createServerFn({ method: 'POST' }).middleware([requ
     if (!manager) throw new Error('Select an available manager.');
     const { data: staff } = await context.supabase.from('agents').select('id,name,role').eq('manager_id', manager.id).eq('kind','employee').eq('status','idle');
     if (!staff?.length) throw new Error('Hire an employee reporting to this manager first.');
+    const firstEmployee = staff[0];
+    if (!firstEmployee) throw new Error('No employee is available.');
     const { generatePlan } = await import('./office-ai.server');
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     try {
       const result = await generatePlan(process.env['LOVABLE_API_KEY'], data.objective, manager.role, staff);
-      const rows = result.plan.tasks.slice(0, 5).map(t => ({ owner_id: context.userId, agent_id: staff.find(s => s.id === t.agentId)?.id ?? staff[0].id, title: t.title, objective: t.objective, criteria: t.criteria, status: 'awaiting_approval', run_id: result.runId }));
+      const rows = result.plan.tasks.slice(0, 5).map(t => ({ owner_id: context.userId, agent_id: staff.find(s => s.id === t.agentId)?.id ?? firstEmployee.id, title: t.title, objective: t.objective, criteria: t.criteria, status: 'awaiting_approval', run_id: result.runId }));
       const { error } = await supabaseAdmin.from('tasks').insert(rows);
       if (error) throw error;
       await supabaseAdmin.from('audit_events').insert({ owner_id: context.userId, action: 'Manager proposed a plan', target_id: manager.id, detail: data.objective });
