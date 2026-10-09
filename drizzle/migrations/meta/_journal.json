@@ -8,6 +8,13 @@
       "when": 1791583609436,
       "tag": "0000_virtual_office_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791584119474,
+      "tag": "0001_tighten_execution_privileges",
+      "breakpoints": true
     }
   ]
 }
