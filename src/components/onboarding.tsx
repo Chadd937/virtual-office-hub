@@ -42,7 +42,7 @@ export function Onboarding() {
 
   return <>
     <Dialog open={step === 'terms'}>
-      <DialogContent className="onboard-dialog" onInteractOutside={e => e.preventDefault()} onEscapeKeyDown={e => e.preventDefault()} hideClose>
+      <DialogContent className="onboard-dialog no-close" onInteractOutside={e => e.preventDefault()} onEscapeKeyDown={e => e.preventDefault()}>
         <DialogHeader><DialogTitle><ShieldCheck className="inline mr-2 text-primary" size={18}/>Before you enter</DialogTitle><DialogDescription>Please read and accept our terms, privacy policy and crypto disclosures. We do not sell your personal information.</DialogDescription></DialogHeader>
         <div className="legal-scroll"><LegalText /></div>
         <label className="check-row"><input type="checkbox" checked={agree.terms} onChange={e => setAgree({ ...agree, terms: e.target.checked })}/>I am 18+ and agree to the Terms of Service and Privacy Policy.</label>
@@ -51,7 +51,7 @@ export function Onboarding() {
       </DialogContent>
     </Dialog>
     <Dialog open={step === 'welcome'}>
-      <DialogContent className="onboard-dialog" onInteractOutside={e => e.preventDefault()} hideClose>
+      <DialogContent className="onboard-dialog no-close" onInteractOutside={e => e.preventDefault()}>
         <div className="welcome-hero"><span className="welcome-avatar"><Person index={0}/></span><div><p className="eyebrow">WELCOME TO</p><h2>GetCryptoDomains.com</h2></div></div>
         <p>Hi, I'm <strong>Morgan, your Store Manager</strong>. I'm your direct assistant and I run this whole virtual office for you.</p>
         <ul className="welcome-list"><li>Tell me about your domain and goals — I'll help plan the website, the app, and a Google Play release package.</li><li>My managers break your requests into tasks. Nothing runs until <strong>you approve it</strong>.</li><li>When employees finish, they <strong>turn in their work</strong> to you for review.</li><li>I'm always in the bottom-right corner if you need me.</li></ul>
@@ -59,7 +59,7 @@ export function Onboarding() {
       </DialogContent>
     </Dialog>
     <Dialog open={step === 'intake'}>
-      <DialogContent className="onboard-dialog" onInteractOutside={e => e.preventDefault()} hideClose>
+      <DialogContent className="onboard-dialog no-close" onInteractOutside={e => e.preventDefault()}>
         <DialogHeader><DialogTitle>Tell Morgan about your project</DialogTitle><DialogDescription>This helps your office plan the right work. No passwords, wallet keys or payment details, please.</DialogDescription></DialogHeader>
         <form className="intake-form" onSubmit={submitIntake}>
           <label>Your domain<input placeholder="example.com or example.crypto" value={form.domain} maxLength={253} onChange={e => setForm({ ...form, domain: e.target.value.trim() })}/></label>
