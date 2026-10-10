@@ -7,3 +7,8 @@ describe('owner-controlled AI work', () => {
   it('provider blocks prevent execution', () => { expect(canRun(false,'Provider denied','2026-10-09','queued')).toBe(false); });
   it('cannot rerun completed work', () => { expect(canTransition('completed','running')).toBe(false); });
 });
+import { canTransition as ct } from '@/lib/workforce-rules';
+describe('turned-in work', () => {
+  it('owner can send work back for revision', () => { expect(ct('verification','queued')).toBe(true); });
+  it('completed work cannot be reopened', () => { expect(ct('completed','queued')).toBe(false); });
+});

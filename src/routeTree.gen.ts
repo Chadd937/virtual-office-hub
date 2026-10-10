@@ -14,6 +14,7 @@ import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as ApprovalsRouteImport } from './routes/approvals'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as LegalRouteImport } from './routes/legal'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TasksRouteImport } from './routes/tasks'
@@ -44,6 +45,11 @@ const IntegrationsRoute = IntegrationsRouteImport.update({
   path: '/integrations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/approvals': typeof ApprovalsRoute
   '/departments': typeof DepartmentsRoute
   '/integrations': typeof IntegrationsRoute
+  '/legal': typeof LegalRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/approvals': typeof ApprovalsRoute
   '/departments': typeof DepartmentsRoute
   '/integrations': typeof IntegrationsRoute
+  '/legal': typeof LegalRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/approvals': typeof ApprovalsRoute
   '/departments': typeof DepartmentsRoute
   '/integrations': typeof IntegrationsRoute
+  '/legal': typeof LegalRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/approvals'
     | '/departments'
     | '/integrations'
+    | '/legal'
     | '/projects'
     | '/settings'
     | '/tasks'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/approvals'
     | '/departments'
     | '/integrations'
+    | '/legal'
     | '/projects'
     | '/settings'
     | '/tasks'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/approvals'
     | '/departments'
     | '/integrations'
+    | '/legal'
     | '/projects'
     | '/settings'
     | '/tasks'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   ApprovalsRoute: typeof ApprovalsRoute
   DepartmentsRoute: typeof DepartmentsRoute
   IntegrationsRoute: typeof IntegrationsRoute
+  LegalRoute: typeof LegalRoute
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
   TasksRoute: typeof TasksRoute
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntegrationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects': {
       id: '/projects'
       path: '/projects'
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApprovalsRoute: ApprovalsRoute,
   DepartmentsRoute: DepartmentsRoute,
   IntegrationsRoute: IntegrationsRoute,
+  LegalRoute: LegalRoute,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
   TasksRoute: TasksRoute,

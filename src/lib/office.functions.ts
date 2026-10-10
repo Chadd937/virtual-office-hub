@@ -32,13 +32,14 @@ export const planObjective = createServerFn({ method: 'POST' }).middleware([requ
   });
 
 export const taskAction = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ taskId: z.string().uuid(), action: z.enum(['approve','run','verify','cancel']) }))
+  .inputValidator(z.object({ taskId: z.string().uuid(), action: z.enum(['approve','run','verify','cancel','revise']), feedback: z.string().max(2000).optional() }))
   .handler(async ({ data, context }) => {
     const { data: task } = await context.supabase.from('tasks').select('*').eq('id', data.taskId).single();
     const { data: office } = await context.supabase.from('offices').select('*').eq('owner_id',context.userId).single();
     if (!task || !office) throw new Error('Task not found.');
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-    const target = data.action === 'approve' ? 'queued' : data.action === 'run' ? 'running' : data.action === 'verify' ? 'completed' : 'cancelled';
+    if (data.action === 'revise' && !data.feedback?.trim()) throw new Error('Tell the employee what to change.');
+    const target = data.action === 'approve' || data.action === 'revise' ? 'queued' : data.action === 'run' ? 'running' : data.action === 'verify' ? 'completed' : 'cancelled';
     if (!canTransition(task.status, target)) throw new Error('This action is not allowed in the current task state.');
     if (data.action === 'verify' && !task.output?.trim()) throw new Error('A deliverable is required before completion.');
     if (data.action === 'run' && !canRun(office.paused, office.ai_blocked, task.approved_at, task.status)) throw new Error(office.ai_blocked || 'Work is paused or not approved.');
@@ -48,7 +49,7 @@ export const taskAction = createServerFn({ method: 'POST' }).middleware([require
       agent = response.data;
       if (!agent) throw new Error('Assigned employee is unavailable.');
     }
-    const { data: claimed, error } = await supabaseAdmin.from('tasks').update({ status: target, updated_at: new Date().toISOString(), ...(data.action === 'approve' ? { approved_at: new Date().toISOString() } : {}) }).eq('id', task.id).eq('owner_id',context.userId).eq('status',task.status).select('id').maybeSingle();
+    const { data: claimed, error } = await supabaseAdmin.from('tasks').update({ status: target, updated_at: new Date().toISOString(), ...(data.action === 'approve' ? { approved_at: new Date().toISOString() } : {}), ...(data.action === 'revise' ? { objective: `${task.objective}\n\nOwner revision request: ${data.feedback}\n\nPrevious draft:\n${task.output ?? ''}`.slice(0, 20000), output: null } : {}) }).eq('id', task.id).eq('owner_id',context.userId).eq('status',task.status).select('id').maybeSingle();
     if (error || !claimed) throw new Error('Task changed elsewhere. Refresh and try again.');
     await supabaseAdmin.from('audit_events').insert({ owner_id: context.userId, action: `Task ${data.action}`, target_id: task.id, detail: task.title });
     if (data.action !== 'run' || !agent) return { ok: true };
@@ -65,4 +66,19 @@ export const taskAction = createServerFn({ method: 'POST' }).middleware([require
       if (failure.block) await supabaseAdmin.from('offices').update({ ai_blocked: failure.message }).eq('owner_id',context.userId);
       throw new Error(failure.message);
     }
+  });
+export const askStoreManager = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator(z.object({ messages: z.array(z.object({ role: z.enum(['user','assistant']), content: z.string().min(1).max(4000) })).min(1).max(20), intake: z.string().max(3000).optional() }))
+  .handler(async ({ data, context }) => {
+    const { data: office } = await context.supabase.from('offices').select('*').eq('owner_id', context.userId).maybeSingle();
+    if (office?.ai_blocked) throw new Error(office.ai_blocked);
+    const [{ data: projects }, { data: tasks }, { data: agents }] = await Promise.all([
+      context.supabase.from('projects').select('name,domain,objective').limit(10),
+      context.supabase.from('tasks').select('title,status').order('created_at',{ascending:false}).limit(15),
+      context.supabase.from('agents').select('name,role,kind').neq('status','retired').limit(20),
+    ]);
+    const summary = JSON.stringify({ projects, tasks, agents, intake: data.intake ?? null });
+    const { chatReply, aiError } = await import('./office-ai.server');
+    try { return await chatReply(process.env['LOVABLE_API_KEY'], summary, data.messages); }
+    catch (error) { throw new Error(aiError(error).message); }
   });
