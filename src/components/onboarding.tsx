@@ -86,7 +86,13 @@ function StoreManagerChat({ intake }: { intake: string | undefined }) {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, [messages, busy]);
+  useEffect(() => {
+    try { const raw = window.localStorage.getItem('gcd-chat'); if (raw) setMessages(JSON.parse(raw)); } catch { /* ignore */ }
+  }, []);
+  useEffect(() => {
+    try { window.localStorage.setItem('gcd-chat', JSON.stringify(messages.slice(-100))); } catch { /* ignore */ }
+    end.current?.scrollIntoView({ block: 'end' });
+  }, [messages, busy]);
   const send = async (e: FormEvent) => {
     e.preventDefault(); const text = input.trim(); if (!text || busy) return;
     const next = [...messages, { role: 'user' as const, content: text.slice(0, 4000) }].slice(-20);
