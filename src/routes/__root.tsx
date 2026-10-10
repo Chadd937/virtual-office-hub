@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { OfficeProvider } from '@/lib/office-context';
+import { Onboarding } from '@/components/onboarding';
 import { Toaster } from '@/components/ui/sonner';
 
 function NotFoundComponent() {
@@ -122,7 +123,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <OfficeProvider><Outlet /></OfficeProvider>
+      <OfficeProvider><Outlet /><Onboarding /></OfficeProvider>
       <Toaster />
     </QueryClientProvider>
   );
