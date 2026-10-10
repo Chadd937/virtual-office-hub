@@ -24,7 +24,7 @@ export function Onboarding() {
   const [agree, setAgree] = useState({ terms: false, risk: false });
   const [form, setForm] = useState<Intake>({ domain: '', hasSite: 'No', business: '', goals: [], audience: '', budget: 'Not sure', notes: '' });
   const update = (s: Saved) => { localStorage.setItem(KEY, JSON.stringify(s)); setSaved(s); };
-  useEffect(() => setSaved(load()), []);
+  useEffect(() => { setSaved(load()); }, []);
 
   // Save intake into the signed-in owner's office as a project, once.
   useEffect(() => {
@@ -86,7 +86,7 @@ function StoreManagerChat({ intake }: { intake: string | undefined }) {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => end.current?.scrollIntoView({ block: 'end' }), [messages, busy]);
+  useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, [messages, busy]);
   const send = async (e: FormEvent) => {
     e.preventDefault(); const text = input.trim(); if (!text || busy) return;
     const next = [...messages, { role: 'user' as const, content: text.slice(0, 4000) }].slice(-20);
