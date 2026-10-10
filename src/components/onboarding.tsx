@@ -31,7 +31,7 @@ export function Onboarding() {
     if (!user || !saved?.intake || saved.intakeSaved === user.id) return;
     const i = saved.intake;
     supabase.from('projects').insert({ owner_id: user.id, name: i.domain || 'My new web & app project', domain: i.domain, objective: intakeText(i)!.slice(0, 2000) }).then(({ error }) => {
-      if (error) return toast.error(`Could not save your website answers: ${error.message}`);
+      if (error) { toast.error(`Could not save your website answers: ${error.message}`); return; }
       update({ ...saved, intakeSaved: user.id }); refresh(); toast.success('Your website answers were saved as a project.');
     });
   }, [user, saved]);
