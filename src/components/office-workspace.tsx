@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { Building2, LayoutGrid, Users, BriefcaseBusiness, ListTodo, Plug, ShieldCheck, Activity, Settings, ChevronDown, ChevronRight, Bell, Search, Plus, Pause, Play, ArrowUpRight, ArrowRight, Sparkles, Check, Menu, LogOut, Globe, FolderKanban, CircleHelp, Command, X, Clock, CheckCheck } from 'lucide-react';
+import { Building2, LayoutGrid, Users, BriefcaseBusiness, ListTodo, Plug, ShieldCheck, Activity, Settings, ChevronDown, ChevronRight, Bell, Search, Plus, Pause, Play, ArrowUpRight, ArrowRight, Sparkles, Check, Menu, LogOut, Globe, FolderKanban, CircleHelp, Command, X, Clock, CheckCheck, Cloud, Bot, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useOffice, type Agent, type Task } from '@/lib/office-context';
