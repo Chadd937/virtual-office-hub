@@ -2,11 +2,18 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { z } from 'zod';
 import { canTransition, canRun } from './workforce-rules';
+import { hasAccess } from './billing-rules';
+
+async function requirePlan(sb: any, userId: string) {
+  const { data } = await sb.from('subscriptions').select('status,current_period_end').eq('owner_id', userId).maybeSingle();
+  if (!hasAccess(data)) throw new Error('Start your 3-day free trial or choose a plan to put your team to work.');
+}
 
 export const planObjective = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator(z.object({ objective: z.string().min(3).max(6000), managerId: z.string().uuid() }))
   .handler(async ({ data, context }) => {
     const { data: office } = await context.supabase.from('offices').select('*').eq('owner_id', context.userId).single();
+    await requirePlan(context.supabase, context.userId);
     if (!office || office.paused || office.ai_blocked) throw new Error(office?.ai_blocked || 'Office is paused or not set up.');
     const { data: manager } = await context.supabase.from('agents').select('*').eq('id', data.managerId).eq('kind', 'manager').eq('status','idle').single();
     if (!manager) throw new Error('Select an available manager.');
@@ -43,6 +50,7 @@ export const taskAction = createServerFn({ method: 'POST' }).middleware([require
     if (!canTransition(task.status, target)) throw new Error('This action is not allowed in the current task state.');
     if (data.action === 'verify' && !task.output?.trim()) throw new Error('A deliverable is required before completion.');
     if (data.action === 'run' && !canRun(office.paused, office.ai_blocked, task.approved_at, task.status)) throw new Error(office.ai_blocked || 'Work is paused or not approved.');
+    if (data.action === 'run') await requirePlan(context.supabase, context.userId);
     let agent;
     if (data.action === 'run') {
       const response = await context.supabase.from('agents').select('*').eq('id',task.agent_id ?? '').eq('status','idle').single();
@@ -79,6 +87,8 @@ export const askStoreManager = createServerFn({ method: 'POST' }).middleware([re
     ]);
     const summary = JSON.stringify({ projects, tasks, agents, intake: data.intake ?? null });
     const { chatReply, aiError } = await import('./office-ai.server');
-    try { return await chatReply(process.env['LOVABLE_API_KEY'], summary, data.messages); }
+    const last = data.messages[data.messages.length - 1]!;
+    if (last.role === 'user') await context.supabase.from('chat_messages').insert({ owner_id: context.userId, role: 'user', content: last.content });
+    try { const r = await chatReply(process.env['LOVABLE_API_KEY'], summary, data.messages); await context.supabase.from('chat_messages').insert({ owner_id: context.userId, role: 'assistant', content: r.text.slice(0, 12000) }); return r; }
     catch (error) { throw new Error(aiError(error).message); }
   });
