@@ -80,6 +80,63 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          owner_id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          owner_id: string
+          role: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          owner_id?: string
+          role?: string
+        }
+        Relationships: []
+      }
+      crypto_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          network: string
+          owner_id: string
+          plan: string
+          token: string
+          tx_hash: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          network: string
+          owner_id: string
+          plan: string
+          token: string
+          tx_hash: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          network?: string
+          owner_id?: string
+          plan?: string
+          token?: string
+          tx_hash?: string
+        }
+        Relationships: []
+      }
       departments: {
         Row: {
           created_at: string
@@ -98,6 +155,33 @@ export type Database = {
           id?: string
           name?: string
           owner_id?: string
+        }
+        Relationships: []
+      }
+      integration_connections: {
+        Row: {
+          account_label: string
+          created_at: string
+          id: string
+          owner_id: string
+          provider: string
+          status: string
+        }
+        Insert: {
+          account_label?: string
+          created_at?: string
+          id?: string
+          owner_id: string
+          provider: string
+          status?: string
+        }
+        Update: {
+          account_label?: string
+          created_at?: string
+          id?: string
+          owner_id?: string
+          provider?: string
+          status?: string
         }
         Relationships: []
       }
@@ -136,6 +220,8 @@ export type Database = {
           name: string
           objective: string
           owner_id: string
+          status: string
+          updated_at: string
         }
         Insert: {
           created_at?: string
@@ -144,6 +230,8 @@ export type Database = {
           name: string
           objective?: string
           owner_id: string
+          status?: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
@@ -152,6 +240,35 @@ export type Database = {
           name?: string
           objective?: string
           owner_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          current_period_end: string | null
+          method: string
+          owner_id: string
+          plan: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          current_period_end?: string | null
+          method: string
+          owner_id: string
+          plan: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          current_period_end?: string | null
+          method?: string
+          owner_id?: string
+          plan?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
