@@ -8,8 +8,8 @@ const plan = z.enum(['starter', 'growth', 'scale']);
 export const confirmCryptoPayment = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator(z.object({ plan, network: z.enum(['solana', 'ethereum', 'base', 'polygon', 'arbitrum', 'bsc', 'tron']), token: z.enum(['USDC', 'USDT']), txHash: z.string().trim().min(40).max(120).regex(/^[A-Za-z0-9]+$/) }))
   .handler(async ({ data, context }) => {
-    const tx = data.network === 'solana' ? data.txHash : data.txHash.toLowerCase().replace(/^0x/, data.network === 'tron' ? '' : '0x');
-    const txNorm = data.network === 'tron' || data.network === 'solana' ? tx : (tx.startsWith('0x') ? tx : `0x${tx}`);
+    const raw = data.txHash.replace(/^0x/i, '');
+    const txNorm = data.network === 'solana' ? data.txHash : data.network === 'tron' ? raw.toLowerCase() : `0x${raw.toLowerCase()}`;
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: used } = await supabaseAdmin.from('crypto_payments').select('id').eq('network', data.network).eq('tx_hash', txNorm).maybeSingle();
     if (used) throw new Error('This transaction has already been used for a plan.');
