@@ -15,6 +15,13 @@
       "when": 1791584119474,
       "tag": "0001_tighten_execution_privileges",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791681180018,
+      "tag": "0002_billing_chat_integrations",
+      "breakpoints": true
     }
   ]
 }

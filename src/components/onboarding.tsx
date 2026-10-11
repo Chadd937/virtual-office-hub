@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { askStoreManager, taskAction } from '@/lib/office.functions';
 import { LegalText, LEGAL_VERSION } from './legal-text';
 import { Person } from './office-scene';
+import { Paywall } from './paywall';
 
 const KEY = 'gcd-onboarding';
 type Intake = { domain: string; hasSite: string; business: string; goals: string[]; audience: string; budget: string; notes: string };
@@ -73,6 +74,7 @@ export function Onboarding() {
         </form>
       </DialogContent>
     </Dialog>
+    {step === null && <Paywall />}
     {!step && <StoreManagerChat intake={intakeText(saved.intake)} />}
     {!step && user && <TurnInWork tasks={data.tasks} agents={data.agents} refresh={refresh} />}
   </>;
@@ -87,17 +89,18 @@ function StoreManagerChat({ intake }: { intake: string | undefined }) {
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const end = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    try { const raw = window.localStorage.getItem('gcd-chat'); if (raw) setMessages(JSON.parse(raw)); } catch { /* ignore */ }
-  }, []);
-  useEffect(() => {
-    try { window.localStorage.setItem('gcd-chat', JSON.stringify(messages.slice(-100))); } catch { /* ignore */ }
-    end.current?.scrollIntoView({ block: 'end' });
-  }, [messages, busy]);
+    if (!user) { setMessages([]); return; }
+    supabase.from('chat_messages').select('role,content').order('created_at', { ascending: true }).limit(500).then(({ data, error }) => {
+      if (error) { toast.error(`Could not load your chat: ${error.message}`); return; }
+      setMessages((data ?? []) as { role: 'user' | 'assistant'; content: string }[]);
+    });
+  }, [user?.id]);
+  useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, [messages, busy, open]);
   const send = async (e: FormEvent) => {
     e.preventDefault(); const text = input.trim(); if (!text || busy) return;
-    const next = [...messages, { role: 'user' as const, content: text.slice(0, 4000) }].slice(-20);
+    const next = [...messages, { role: 'user' as const, content: text.slice(0, 4000) }];
     setMessages(next); setInput(''); setBusy(true);
-    try { const r = await ask({ data: { messages: next, ...(intake ? { intake: intake.slice(0, 3000) } : {}) } }); setMessages([...next, { role: 'assistant', content: r.text }]); }
+    try { const r = await ask({ data: { messages: next.slice(-20).map(m => ({ ...m, content: m.content.slice(0, 4000) })), ...(intake ? { intake: intake.slice(0, 3000) } : {}) } }); setMessages([...next, { role: 'assistant', content: r.text }]); }
     catch (err) { toast.error(err instanceof Error ? err.message : 'Morgan could not reply.'); }
     finally { setBusy(false); }
   };

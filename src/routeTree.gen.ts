@@ -13,12 +13,18 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as ApprovalsRouteImport } from './routes/approvals'
 import { Route as DepartmentsRouteImport } from './routes/departments'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as LegalRouteImport } from './routes/legal'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyChoicesRouteImport } from './routes/privacy-choices'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as WorkforceRouteImport } from './routes/workforce'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +46,11 @@ const DepartmentsRoute = DepartmentsRouteImport.update({
   path: '/departments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IntegrationsRoute = IntegrationsRouteImport.update({
   id: '/integrations',
   path: '/integrations',
@@ -48,6 +59,16 @@ const IntegrationsRoute = IntegrationsRouteImport.update({
 const LegalRoute = LegalRouteImport.update({
   id: '/legal',
   path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyChoicesRoute = PrivacyChoicesRouteImport.update({
+  id: '/privacy-choices',
+  path: '/privacy-choices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsRoute = ProjectsRouteImport.update({
@@ -60,6 +81,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
@@ -70,30 +96,52 @@ const WorkforceRoute = WorkforceRouteImport.update({
   path: '/workforce',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/approvals': typeof ApprovalsRoute
   '/departments': typeof DepartmentsRoute
+  '/faq': typeof FaqRoute
   '/integrations': typeof IntegrationsRoute
   '/legal': typeof LegalRoute
+  '/pricing': typeof PricingRoute
+  '/privacy-choices': typeof PrivacyChoicesRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/workforce': typeof WorkforceRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog/': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/approvals': typeof ApprovalsRoute
   '/departments': typeof DepartmentsRoute
+  '/faq': typeof FaqRoute
   '/integrations': typeof IntegrationsRoute
   '/legal': typeof LegalRoute
+  '/pricing': typeof PricingRoute
+  '/privacy-choices': typeof PrivacyChoicesRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/workforce': typeof WorkforceRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,12 +149,18 @@ export interface FileRoutesById {
   '/activity': typeof ActivityRoute
   '/approvals': typeof ApprovalsRoute
   '/departments': typeof DepartmentsRoute
+  '/faq': typeof FaqRoute
   '/integrations': typeof IntegrationsRoute
   '/legal': typeof LegalRoute
+  '/pricing': typeof PricingRoute
+  '/privacy-choices': typeof PrivacyChoicesRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tasks': typeof TasksRoute
   '/workforce': typeof WorkforceRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -115,36 +169,54 @@ export interface FileRouteTypes {
     | '/activity'
     | '/approvals'
     | '/departments'
+    | '/faq'
     | '/integrations'
     | '/legal'
+    | '/pricing'
+    | '/privacy-choices'
     | '/projects'
     | '/settings'
+    | '/sitemap.xml'
     | '/tasks'
     | '/workforce'
+    | '/blog/$slug'
+    | '/blog/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/activity'
     | '/approvals'
     | '/departments'
+    | '/faq'
     | '/integrations'
     | '/legal'
+    | '/pricing'
+    | '/privacy-choices'
     | '/projects'
     | '/settings'
+    | '/sitemap.xml'
     | '/tasks'
     | '/workforce'
+    | '/blog/$slug'
+    | '/blog'
   id:
     | '__root__'
     | '/'
     | '/activity'
     | '/approvals'
     | '/departments'
+    | '/faq'
     | '/integrations'
     | '/legal'
+    | '/pricing'
+    | '/privacy-choices'
     | '/projects'
     | '/settings'
+    | '/sitemap.xml'
     | '/tasks'
     | '/workforce'
+    | '/blog/$slug'
+    | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,12 +224,18 @@ export interface RootRouteChildren {
   ActivityRoute: typeof ActivityRoute
   ApprovalsRoute: typeof ApprovalsRoute
   DepartmentsRoute: typeof DepartmentsRoute
+  FaqRoute: typeof FaqRoute
   IntegrationsRoute: typeof IntegrationsRoute
   LegalRoute: typeof LegalRoute
+  PricingRoute: typeof PricingRoute
+  PrivacyChoicesRoute: typeof PrivacyChoicesRoute
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TasksRoute: typeof TasksRoute
   WorkforceRoute: typeof WorkforceRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -190,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DepartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/integrations': {
       id: '/integrations'
       path: '/integrations'
@@ -202,6 +287,20 @@ declare module '@tanstack/react-router' {
       path: '/legal'
       fullPath: '/legal'
       preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-choices': {
+      id: '/privacy-choices'
+      path: '/privacy-choices'
+      fullPath: '/privacy-choices'
+      preLoaderRoute: typeof PrivacyChoicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects': {
@@ -218,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tasks': {
       id: '/tasks'
       path: '/tasks'
@@ -232,6 +338,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkforceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -240,12 +360,18 @@ const rootRouteChildren: RootRouteChildren = {
   ActivityRoute: ActivityRoute,
   ApprovalsRoute: ApprovalsRoute,
   DepartmentsRoute: DepartmentsRoute,
+  FaqRoute: FaqRoute,
   IntegrationsRoute: IntegrationsRoute,
   LegalRoute: LegalRoute,
+  PricingRoute: PricingRoute,
+  PrivacyChoicesRoute: PrivacyChoicesRoute,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TasksRoute: TasksRoute,
   WorkforceRoute: WorkforceRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
