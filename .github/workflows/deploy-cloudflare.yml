@@ -32,7 +32,18 @@ jobs:
       - name: Run tests
         run: bun run test
 
-      - name: Check required settings
+      - name: Build production app
+        run: bun run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Verify Cloudflare build output
+        run: |
+          test -f .output/server/index.mjs
+          test -d .output/public
+
+      - name: Check required deployment settings
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
@@ -46,17 +57,6 @@ jobs:
             if [ -z "${!name}" ]; then echo "::error::Missing required GitHub Actions secret: $name"; missing=1; fi
           done
           test "$missing" -eq 0
-
-      - name: Build production app
-        run: bun run build
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-
-      - name: Verify Cloudflare build output
-        run: |
-          test -f .output/server/index.mjs
-          test -d .output/public
 
       - name: Deploy Worker and static assets
         run: bunx --bun wrangler@4 deploy --config wrangler.jsonc
