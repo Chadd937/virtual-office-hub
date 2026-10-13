@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "getcryptodomains-virtual-office",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-10-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "routes": [{ "pattern": "office.getcryptodomains.com", "custom_domain": true }],
+  "assets": { "directory": ".output/public", "binding": "ASSETS" }
+}
